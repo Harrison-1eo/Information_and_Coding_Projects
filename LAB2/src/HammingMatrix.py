@@ -2,8 +2,9 @@
  @project: c1.py
  @description: (15, 11)汉明码，使用生成矩阵和校验矩阵
  @author: Harrison-1eo
- @date: 2023-05-10
- @version: 1.0
+ @date: 2023-05-28
+ @version: 1.1
+ @update: 重写了生成G矩阵的方法
 """
 def print_matrix(matrix):
     """
@@ -11,9 +12,9 @@ def print_matrix(matrix):
     """
     for i in range(len(matrix)):
         for j in range(len(matrix[0])):
-            print(matrix[i][j], end=' & ')
-        print('\\\\')
-    print()
+            print(matrix[i][j], end=' ')
+        print()
+    print('----------------------------')
 
 
 def multi_matrix(A, B):
@@ -38,8 +39,8 @@ class hamming_matrix:
         self.N = N
         self.K = K
         self.R = N - K
-        self.H, tmp, ch = self.gen_H_matrix()
-        self.G          = self.gen_G_matrix(tmp, ch[::-1])
+        self.H = self.gen_H_matrix()
+        self.G = self.gen_G_matrix(log)
         
         # 将H和G矩阵中元素转换为int
         for i in range(self.R):
@@ -64,14 +65,24 @@ class hamming_matrix:
         
         # 将H矩阵的每一列转换为二进制数，从1到2**R-1
         H = [[0 for i in range(N)] for j in range(R)]
-        res = [[0 for i in range(N)] for j in range(R)]
         for i in range(1, 2 ** R):
             num = bin(i)[2:].zfill(R)
             num = list(num)[::-1]
             for j in range(R):
                 H[j][i - 1] = num[j]
-                res[j][i - 1] = num[j]
-        # res和H中存储的是 0 - 2**R-1 的二进制数
+    
+        return H
+    
+    def gen_G_matrix(self, log=False):
+        N, K, R = self.N, self.K, self.R
+        
+        # 首先生成H矩阵
+        H = [[0 for i in range(N)] for j in range(R)]
+        for i in range(1, 2 ** R):
+            num = bin(i)[2:].zfill(R)
+            num = list(num)[::-1]
+            for j in range(R):
+                H[j][i - 1] = num[j]
         
         # 将H的后R列变为单位矩阵
         # ch用于记录H的列交换情况
@@ -99,12 +110,10 @@ class hamming_matrix:
                         H[k][i], H[k][j] = H[k][j], H[k][i]
                     ch.append((i, j))
                     
+        if log:
+            print("H_s:")
+            print_matrix(H)
                     
-        return res, H, ch
-    
-    def gen_G_matrix(self, H: list, ch: list):
-        N, K, R = self.N, self.K, self.R
-        
         # 生成G矩阵, 前K列为单位矩阵，后R列为H的转置
         G = [[0 for i in range(N)] for j in range(K)]
         for i in range(K):
@@ -113,9 +122,9 @@ class hamming_matrix:
             for j in range(K):
                 G[j][i + K] = H[i][j]
         
-        # 输出当前的G矩阵
-        # print("G_tmp:")
-        # print_matrix(G)
+        if log:
+            print("G_s:")
+            print_matrix(G)
         
         # 根据ch，交换G的列，做相同的变换
         for i, j in ch:
