@@ -7,10 +7,11 @@
 """
 
 class hamming_check:
-    def __init__(self, N, K):
+    def __init__(self, N, K, if_enhance=False):
         self.N = N
         self.K = K
         self.R = N - K
+        self.if_enhance = if_enhance
         
     def encode(self, msg: str) -> str:
         if len(msg) != self.K:
@@ -42,7 +43,7 @@ class hamming_check:
     
         return ''.join([str(i) for i in res])
     
-    def decode(self, msg: str) -> str:
+    def decode(self, msg: str):
         if len(msg) != self.N:
             raise ValueError("msg length error")
         
@@ -66,7 +67,10 @@ class hamming_check:
             if i & (i + 1) != 0:
                 res += str(msg[i])
                 
-        return res
+        if self.if_enhance:
+            return res, wrong    
+        else:    
+            return res
                 
     
 if __name__ == '__main__':
