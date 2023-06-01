@@ -3,7 +3,7 @@
  @description: (15, 11)汉明码，使用奇偶校验方法，增强版，可以检测两位错误，但不能纠正两位错误
  @author: Harrison-1eo
  @date: 2023-05-29
- @version: 1.0
+ @version: 1.1 重构初始化函数的实现方法
 """
 from HammingCheck import hamming_check
 
@@ -59,7 +59,9 @@ if __name__ == '__main__':
         code[index] = str(1 - int(code[index]))
         code = ''.join(code)
         print(f'one bit error: {index:5}', code, '->', h.decode(code)[1], h.decode(code)[0])
-    print()    
+    
+    print()
+        
     # 随机引入2位错误
     for _ in range(5):
         code = h.encode(code_ori)

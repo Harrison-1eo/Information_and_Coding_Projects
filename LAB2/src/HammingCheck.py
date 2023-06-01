@@ -2,8 +2,8 @@
  @project: c3.py
  @description: (15, 11)汉明码，使用奇偶校验方法
  @author: Harrison-1eo
- @date: 2023-05-15
- @version: 1.0
+ @date: 2023-05-25
+ @version: 1.1 添加if_enhance选项
 """
 
 class hamming_check:
